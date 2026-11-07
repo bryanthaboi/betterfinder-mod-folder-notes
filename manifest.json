@@ -1,0 +1,47 @@
+{
+  "manifestVersion": 1,
+  "id": "bryanthaboi.folder-notes",
+  "name": "Folder Notes",
+  "author": "bryanthaboi",
+  "version": "1.0.0",
+  "api": ">=1.0.0 <2.0.0",
+  "app": ">=1.0.0 <2.0.0",
+  "runtime": "ts/1",
+  "entry": "scripts/main.ts",
+  "license": "MIT",
+  "permissions": [
+    {"kind": "storage", "quotaBytes": 1048576},
+    {"kind": "ui", "surfaces": ["panel", "toolbar", "contextMenu"]}
+  ],
+  "contributes": {
+    "panels": [
+      {"id": "notes", "title": "Folder Notes", "edge": "right", "presentation": "slideOut", "icon": "note.text"}
+    ],
+    "toolbar": [
+      {"id": "add-note", "title": "Note", "command": "add-note", "icon": "note.text.badge.plus"}
+    ],
+    "contextMenu": [
+      {"id": "add-note-here", "title": "Add Folder Note", "command": "add-note", "target": "background"}
+    ],
+    "commands": [
+      {"id": "add-note", "title": "Add Draft as Folder Note", "handler": "addNote", "category": "Folder Notes"},
+      {"id": "remove-note", "title": "Remove Latest Folder Note", "handler": "removeNote", "category": "Folder Notes"},
+      {"id": "clear-notes", "title": "Clear Folder Notes", "handler": "clearNotes", "category": "Folder Notes"}
+    ],
+    "settingsPanes": [
+      {"id": "notes", "title": "Folder Notes", "settings": ["draft"], "icon": "note.text"}
+    ]
+  },
+  "hooks": [
+    {"name": "activate", "handler": "activate", "version": 1},
+    {"name": "location.changed", "handler": "locationChanged", "version": 1},
+    {"name": "command.run", "handler": "addNote", "version": 1},
+    {"name": "command.run", "handler": "removeNote", "version": 1},
+    {"name": "command.run", "handler": "clearNotes", "version": 1}
+  ],
+  "settings": [
+    {"key": "draft", "label": "Next note", "type": "string", "default": "", "maxLength": 1000, "description": "Type the note here, then hit Add Note in the panel or toolbar. It gets saved to the folder u are in."}
+  ],
+  "dependencies": [],
+  "conflicts": []
+}
