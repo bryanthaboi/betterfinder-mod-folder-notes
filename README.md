@@ -11,7 +11,7 @@ sticky notes per folder, qspace style. open a folder, see the notes u left there
 - `storage`: notes live here, keyed by folder
 - `ui`: panel, toolbar, context menu
 
-there is no text box node in the mod ui yet, so u type the note into the folder notes settings pane and hit add. it saves to the folder u are in and clears the draft. undo pops the latest, clear wipes the folder. 50 notes per folder max.
+type the note right in the panel and hit return (or add). it saves to the folder u are in. undo pops the latest, clear wipes the folder. 50 notes per folder max.
 
 ## install
 

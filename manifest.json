@@ -3,7 +3,7 @@
   "id": "bryanthaboi.folder-notes",
   "name": "Folder Notes",
   "author": "bryanthaboi",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "api": ">=1.0.0 <2.0.0",
   "app": ">=1.0.0 <2.0.0",
   "runtime": "ts/1",
@@ -24,12 +24,9 @@
       {"id": "add-note-here", "title": "Add Folder Note", "command": "add-note", "target": "background"}
     ],
     "commands": [
-      {"id": "add-note", "title": "Add Draft as Folder Note", "handler": "addNote", "category": "Folder Notes"},
+      {"id": "add-note", "title": "Add Typed Folder Note", "handler": "addNote", "category": "Folder Notes"},
       {"id": "remove-note", "title": "Remove Latest Folder Note", "handler": "removeNote", "category": "Folder Notes"},
       {"id": "clear-notes", "title": "Clear Folder Notes", "handler": "clearNotes", "category": "Folder Notes"}
-    ],
-    "settingsPanes": [
-      {"id": "notes", "title": "Folder Notes", "settings": ["draft"], "icon": "note.text"}
     ]
   },
   "hooks": [
@@ -39,9 +36,7 @@
     {"name": "command.run", "handler": "removeNote", "version": 1},
     {"name": "command.run", "handler": "clearNotes", "version": 1}
   ],
-  "settings": [
-    {"key": "draft", "label": "Next note", "type": "string", "default": "", "maxLength": 1000, "description": "Type the note here, then hit Add Note in the panel or toolbar. It gets saved to the folder u are in."}
-  ],
+  "settings": [],
   "dependencies": [],
   "conflicts": []
 }

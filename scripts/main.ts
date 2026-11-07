@@ -1,5 +1,5 @@
-import { locations, settings, storage, ui } from "betterfinder";
-import type { ActivateHandler, CommandRunHandler, LocationChangedHandler, UINode } from "betterfinder";
+import { locations, storage, ui } from "betterfinder";
+import type { ActivateHandler, CommandRunHandler, JSONValue, LocationChangedHandler, UINode } from "betterfinder";
 
 interface Note {
   at: string;
@@ -7,6 +7,7 @@ interface Note {
 }
 
 const MAX_NOTES = 50;
+const MAX_LENGTH = 1000;
 
 const plain = (value: unknown): any => JSON.parse(JSON.stringify(value));
 
@@ -21,10 +22,28 @@ async function load(folder: string): Promise<Note[]> {
 
 async function save(folder: string, notes: Note[]): Promise<void> {
   if (notes.length === 0) {
-    await storage.delete(keyFor(folder));
+    await storage.remove(keyFor(folder));
   } else {
     await storage.set(keyFor(folder), plain(notes));
   }
+}
+
+function typed(args: JSONValue | undefined): string {
+  if (args === null || typeof args !== "object" || Array.isArray(args)) {
+    return "";
+  }
+  const direct = args["value"];
+  if (typeof direct === "string") {
+    return direct.trim();
+  }
+  const fields = args["fields"];
+  if (fields !== null && typeof fields === "object" && !Array.isArray(fields)) {
+    const draft = fields["draft"];
+    if (typeof draft === "string") {
+      return draft.trim();
+    }
+  }
+  return "";
 }
 
 async function render(): Promise<void> {
@@ -42,11 +61,11 @@ async function render(): Promise<void> {
     });
   }
   body.push({ type: "divider" });
-  body.push({ type: "text", text: "write the next note in settings, folder notes, then hit add", label: "How to add a note" });
+  body.push({ type: "textField", id: "draft", text: "", placeholder: "new note, hit return to save", label: "New note", command: "add-note" });
   body.push({
     type: "hstack",
     children: [
-      { type: "button", text: "Add", label: "Save the draft as a note on this folder", command: "add-note" },
+      { type: "button", text: "Add", label: "Save the typed note on this folder", command: "add-note" },
       { type: "button", text: "Undo", label: "Remove the latest note", command: "remove-note" },
       { type: "button", text: "Clear", label: "Remove every note on this folder", command: "clear-notes" },
     ],
@@ -63,10 +82,9 @@ export const locationChanged: LocationChangedHandler = async (context, input) =>
 };
 
 export const addNote: CommandRunHandler = async (context, input) => {
-  const draft = await settings.get("draft");
-  const text = typeof draft === "string" ? draft.trim() : "";
+  const text = typed(input.args).slice(0, MAX_LENGTH);
   if (text.length === 0) {
-    return { message: "type a note in settings first (folder notes, next note)" };
+    return { message: "type a note in the folder notes panel first" };
   }
   const here = await locations.current();
   const notes = await load(here.id);
@@ -75,7 +93,6 @@ export const addNote: CommandRunHandler = async (context, input) => {
     notes.shift();
   }
   await save(here.id, notes);
-  await settings.set("draft", "");
   await render();
   return { message: "note saved to " + here.title };
 };
